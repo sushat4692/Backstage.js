@@ -1,9 +1,9 @@
-import { Emit } from "./type";
+import { EventEmitKey, EventEmitType, LoadedFile } from "./type";
 
 const SingleLoader = (
     file: string,
-    emit: () => void,
-    complete: () => void,
+    progress: () => void,
+    complete: (file: string, size: number) => void,
     error: () => void
 ) => {
     let _total = 0;
@@ -24,11 +24,11 @@ const SingleLoader = (
 
                 _total = e.total;
                 _current = e.loaded;
-                emit();
+                progress();
             };
 
             xhr.onload = (e) => {
-                complete();
+                complete(file, _total);
             };
 
             xhr.onerror = (e) => {
@@ -50,37 +50,57 @@ const SingleLoader = (
 };
 type SingleLoaderType = ReturnType<typeof SingleLoader>;
 
-export const Loader = (files: string[], emit: (emit: Emit) => void) => {
+export const Loader = (
+    files: string[],
+    emit: <K extends EventEmitType>(key: K, value: EventEmitKey<K>) => void
+) => {
     let fileLength = files.length;
     const loaders: SingleLoaderType[] = [];
+
+    let fileResults: LoadedFile[] = files.map((file) => ({ file, size: 0 }));
 
     files.forEach((file) => {
         const loader = SingleLoader(
             file,
             () => {
+                let ready = true;
+
                 const result = loaders.reduce(
                     (acc, cur) => {
                         acc.total += cur.total();
                         acc.current += cur.current();
-                        acc.ready = acc.ready && cur.ready();
+                        ready = ready && cur.ready();
                         return acc;
                     },
-                    { total: 0, current: 0, per: 0, ready: true }
+                    { total: 0, current: 0, per: 0 }
                 );
 
-                if (result.ready) {
+                if (ready) {
                     result.per = result.current / result.total;
-                    emit({ key: "progress", value: result });
+                    emit("progress", result);
                 }
             },
-            () => {
+            (file, size) => {
+                emit("file_complete", { file, size });
+
+                let total = 0;
+                fileResults = fileResults.map((res) => {
+                    const _size = file === res.file ? size : res.size;
+                    total += _size;
+
+                    return {
+                        file: res.file,
+                        size: _size,
+                    };
+                });
+
                 fileLength -= 1;
                 if (fileLength <= 0) {
-                    emit({ key: "complete", value: {} });
+                    emit("complete", { total, files: fileResults });
                 }
             },
             () => {
-                emit({ key: "error", value: new Error("error") });
+                emit("error", new Error("error"));
             }
         );
         loaders.push(loader);

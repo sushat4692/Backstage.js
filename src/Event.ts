@@ -1,35 +1,60 @@
-import { eventmit } from "eventmit";
-import { EventEmitKey, EventEmitType, Event, Emit } from "./type";
+import { eventmit, EventmitHandler } from "eventmit";
+import { EventEmitKey, EventEmitType } from "./type";
 
 export const prepareEvent = () => {
     const progress = eventmit<EventEmitKey<"progress">>();
     const error = eventmit<EventEmitKey<"error">>();
+    const file_complete = eventmit<EventEmitKey<"file_complete">>();
     const complete = eventmit<EventEmitKey<"complete">>();
 
-    const on = (event: Event) => {
-        switch (event.key) {
+    const on = <K extends EventEmitType>(
+        key: K,
+        emitter: EventmitHandler<EventEmitKey<K>>
+    ) => {
+        switch (key) {
             case "progress":
-                progress.on(event.handler);
+                progress.on(
+                    emitter as EventmitHandler<EventEmitKey<"progress">>
+                );
                 break;
             case "error":
-                error.on(event.handler);
+                error.on(emitter as EventmitHandler<EventEmitKey<"error">>);
+                break;
+            case "file_complete":
+                file_complete.on(
+                    emitter as EventmitHandler<EventEmitKey<"file_complete">>
+                );
                 break;
             case "complete":
-                complete.on(event.handler);
+                complete.on(
+                    emitter as EventmitHandler<EventEmitKey<"complete">>
+                );
                 break;
         }
     };
 
-    const off = (event: Event) => {
-        switch (event.key) {
+    const off = <K extends EventEmitType>(
+        key: K,
+        emitter: EventmitHandler<EventEmitKey<K>>
+    ) => {
+        switch (key) {
             case "progress":
-                progress.off(event.handler);
+                progress.off(
+                    emitter as EventmitHandler<EventEmitKey<"progress">>
+                );
                 break;
             case "error":
-                error.off(event.handler);
+                error.off(emitter as EventmitHandler<EventEmitKey<"error">>);
+                break;
+            case "file_complete":
+                file_complete.off(
+                    emitter as EventmitHandler<EventEmitKey<"file_complete">>
+                );
                 break;
             case "complete":
-                complete.off(event.handler);
+                complete.off(
+                    emitter as EventmitHandler<EventEmitKey<"complete">>
+                );
                 break;
         }
     };
@@ -42,20 +67,27 @@ export const prepareEvent = () => {
             case "error":
                 error.offAll();
                 break;
+            case "file_complete":
+                file_complete.offAll();
+                break;
             case "complete":
                 complete.offAll();
                 break;
         }
     };
 
-    const emit = (emit: Emit) => {
-        switch (emit.key) {
+    const emit = <K extends EventEmitType>(key: K, value: EventEmitKey<K>) => {
+        switch (key) {
             case "progress":
-                return progress.emit(emit.value);
+                return progress.emit(value as EventEmitKey<"progress">);
             case "error":
-                return error.emit(emit.value);
+                return error.emit(value as EventEmitKey<"error">);
+            case "file_complete":
+                return file_complete.emit(
+                    value as EventEmitKey<"file_complete">
+                );
             case "complete":
-                return complete.emit(emit.value);
+                return complete.emit(value as EventEmitKey<"complete">);
         }
     };
 
