@@ -1,0 +1,54 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+.loading {
+  display: grid;
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  place-items: center;
+  background: #fff;
+  will-change: opacity;
+  transition: opacity 0.3s;
+}
+.loading.is-loaded {
+  opacity: 0;
+  pointer-events: none;
+}
+.loading__bar {
+  width: 320px;
+  height: 16px;
+  border-radius: 3px;
+  overflow: hidden;
+  background: #ccc;
+  position: relative;
+}
+.loading__bar__gage {
+  height: 100%;
+  background-color: #99f;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+}
+.gallery__item {
+  margin: 0;
+  aspect-ratio: 1/1;
+}
+.gallery__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/*# sourceMappingURL=style.css.map */
