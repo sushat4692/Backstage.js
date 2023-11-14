@@ -1,14 +1,7 @@
-import { prepareEvent } from "./Event";
 import { Loader } from "./Loader";
+import { LoaderType } from "./type";
 
-export const Backstage = (files: string[]) => {
-    const { on, off, offAll, emit } = prepareEvent();
-    const loader = Loader(files, emit);
-
-    return {
-        on,
-        off,
-        offAll,
-        start: loader.start,
-    };
+export const Backstage = (type: LoaderType, files: string[]) => {
+    const loader = Loader(type, files);
+    return loader;
 };

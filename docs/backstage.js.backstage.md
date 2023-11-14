@@ -7,9 +7,14 @@
 **Signature:**
 
 ```typescript
-Backstage: (files: string[]) => {
-    on: <K extends import("./type").EventEmitType>(key: K, emitter: import("eventmit").EventmitHandler<import("./type").EventEmitKey<K>>) => void;
-    off: <K_1 extends import("./type").EventEmitType>(key: K_1, emitter: import("eventmit").EventmitHandler<import("./type").EventEmitKey<K_1>>) => void;
+Backstage: (type: LoaderType, files: string[]) => {
+    on: ({ type, emitter }: import("./type").EventEmitKey<import("./type").ParallelLoaderEmitProgressType, Error, import("./type").ParallelLoaderEmitCompleteType, null, import("./type").ParallelLoaderEmitFileCompleteType>) => void;
+    off: ({ type, emitter }: import("./type").EventEmitKey<import("./type").ParallelLoaderEmitProgressType, Error, import("./type").ParallelLoaderEmitCompleteType, null, import("./type").ParallelLoaderEmitFileCompleteType>) => void;
+    offAll: (key: import("./type").EventEmitType) => void;
+    start: () => void;
+} | {
+    on: ({ type, emitter }: import("./type").EventEmitKey<import("./type").SerialLoaderEmitProgressType, Error, import("./type").SerialLoaderEmitCompleteType, import("./type").SerialLoaderEmitFileProgressType, import("./type").SerialLoaderEmitFileCompleteType>) => void;
+    off: ({ type, emitter }: import("./type").EventEmitKey<import("./type").SerialLoaderEmitProgressType, Error, import("./type").SerialLoaderEmitCompleteType, import("./type").SerialLoaderEmitFileProgressType, import("./type").SerialLoaderEmitFileCompleteType>) => void;
     offAll: (key: import("./type").EventEmitType) => void;
     start: () => void;
 }

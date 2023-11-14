@@ -1,48 +1,83 @@
 document.addEventListener("DOMContentLoaded", () => {
-    var start = document.querySelector("#start");
+    var serial = document.querySelector("#serial");
+    var parallel = document.querySelector("#parallel");
     var log = document.querySelector("#log");
 
-    if (!start || !log) {
+    if (!serial || !parallel || !log) {
         return;
     }
 
-    start.addEventListener("click", () => {
-        start.setAttribute("disabled", "disabled");
+    serial.addEventListener("click", () => {
+        startLoading("serial");
+    });
 
-        var t = new Date().getTime();
+    parallel.addEventListener("click", () => {
+        startLoading("parallel");
+    });
 
-        var backstage = Backstage([
-            "https://picsum.photos/id/1/1600/1600?t=" + t,
-            "https://picsum.photos/id/2/1600/1600?t=" + t,
-            "https://picsum.photos/id/3/1600/1600?t=" + t,
-            "https://picsum.photos/id/4/1600/1600?t=" + t,
-            "https://picsum.photos/id/5/1600/1600?t=" + t,
-            "https://picsum.photos/id/6/1600/1600?t=" + t,
-            "https://picsum.photos/id/7/1600/1600?t=" + t,
-            "https://picsum.photos/id/8/1600/1600?t=" + t,
-            "https://picsum.photos/id/9/1600/1600?t=" + t,
-            "https://picsum.photos/id/10/1600/1600?t=" + t,
-            "https://picsum.photos/id/11/1600/1600?t=" + t,
-            "https://picsum.photos/id/12/1600/1600?t=" + t,
-            "https://picsum.photos/id/13/1600/1600?t=" + t,
-            "https://picsum.photos/id/14/1600/1600?t=" + t,
-            "https://picsum.photos/id/15/1600/1600?t=" + t,
-            "https://picsum.photos/id/16/1600/1600?t=" + t,
+    const clearLog = () => {
+        log.value = "";
+    };
+
+    const startLoading = (type) => {
+        clearLog();
+        serial.setAttribute("disabled", "disabled");
+        parallel.setAttribute("disabled", "disabled");
+
+        var backstage = Backstage(type, [
+            getRandomImage(1),
+            getRandomImage(2),
+            getRandomImage(3),
+            getRandomImage(4),
+            getRandomImage(5),
+            getRandomImage(6),
+            getRandomImage(7),
+            getRandomImage(8),
+            getRandomImage(9),
+            getRandomImage(1),
+            getRandomImage(1),
+            getRandomImage(1),
+            getRandomImage(1),
+            getRandomImage(1),
+            getRandomImage(1),
+            getRandomImage(1),
         ]);
 
-        backstage.on("progress", (e) => {
-            log.value = log.value + "[PROGRESS] : " + JSON.stringify(e) + "\n";
+        backstage.on({
+            type: "progress",
+            emitter: (e) => {
+                log.value =
+                    log.value + "[PROGRESS] : " + JSON.stringify(e) + "\n";
+            },
         });
 
-        backstage.on("file_complete", (e) => {
-            log.value =
-                log.value + "[FILE LOADED] : " + JSON.stringify(e) + "\n";
+        backstage.on({
+            type: "file_progress",
+            emitter: (e) => {
+                log.value =
+                    log.value + "[FILE PROGRESS] : " + JSON.stringify(e) + "\n";
+            },
         });
 
-        backstage.on("complete", (e) => {
-            log.value = log.value + "[LOADED] : " + JSON.stringify(e) + "\n";
+        backstage.on({
+            type: "file_complete",
+            emitter: (e) => {
+                log.value =
+                    log.value + "[FILE LOADED] : " + JSON.stringify(e) + "\n";
+            },
+        });
+
+        backstage.on({
+            type: "complete",
+            emitter: (e) => {
+                log.value =
+                    log.value + "[LOADED] : " + JSON.stringify(e) + "\n";
+
+                serial.removeAttribute("disabled");
+                parallel.removeAttribute("disabled");
+            },
         });
 
         backstage.start();
-    });
+    };
 });
