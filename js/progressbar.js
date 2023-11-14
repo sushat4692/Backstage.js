@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
-    var backstage = Backstage([
+    var backstage = Backstage("parallel", [
         "https://picsum.photos/id/1/1600/1600",
         "https://picsum.photos/id/2/1600/1600",
         "https://picsum.photos/id/3/1600/1600",
@@ -25,18 +25,27 @@ document.addEventListener("DOMContentLoaded", () => {
         "https://picsum.photos/id/16/1600/1600",
     ]);
 
-    backstage.on("progress", (e) => {
-        console.log(e);
-        gage.style.width = e.per * 100 + "%";
+    backstage.on({
+        type: "progress",
+        emitter: (e) => {
+            console.log(e);
+            gage.style.width = e.per * 100 + "%";
+        },
     });
 
-    backstage.on("file_complete", (e) => {
-        console.log(e);
+    backstage.on({
+        type: "file_complete",
+        emitter: (e) => {
+            console.log(e);
+        },
     });
 
-    backstage.on("complete", (e) => {
-        console.log(e);
-        loading.classList.add("is-loaded");
+    backstage.on({
+        type: "complete",
+        emitter: (e) => {
+            console.log(e);
+            loading.classList.add("is-loaded");
+        },
     });
 
     backstage.start();
