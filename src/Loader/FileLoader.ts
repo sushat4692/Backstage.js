@@ -24,8 +24,6 @@ export const FileLoader = (file: string) => {
         xhr.responseType = "blob";
 
         xhr.onloadstart = (e) => {
-            console.log(e);
-
             ready = true;
             current = e.loaded;
 
@@ -36,8 +34,6 @@ export const FileLoader = (file: string) => {
         };
 
         xhr.onprogress = (e) => {
-            console.log(e);
-
             current = e.loaded;
 
             if (e.lengthComputable) {

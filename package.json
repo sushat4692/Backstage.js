@@ -1,7 +1,7 @@
 {
   "name": "backstage.js",
   "type": "module",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Preloading assets such as images and videos",
   "homepage": "https://github.com/sushat4692/backstage.js#readme",
   "main": "dist/index.js",
